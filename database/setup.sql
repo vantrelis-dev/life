@@ -4,6 +4,12 @@ begin;
 create schema if not exists life_private;
 revoke all on schema life_private from public, anon, authenticated;
 grant usage on schema life_private to authenticated;
+-- Supabase's automatic-RLS event trigger is internal, not a client RPC.
+do $$ begin
+  if to_regprocedure('public.rls_auto_enable()') is not null then
+    revoke execute on function public.rls_auto_enable() from public, anon, authenticated;
+  end if;
+end $$;
 
 create table life_private.owners (
   user_id uuid primary key references auth.users(id) on delete cascade
