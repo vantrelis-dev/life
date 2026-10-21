@@ -1,0 +1,11 @@
+'use strict';
+const assert=require('node:assert/strict'),fs=require('node:fs');
+const M=require('./dist/model.js'),state=M.upgrade(M.seed('2026-10-21'));
+assert.equal(M.validState(state),true);
+for(const key of ['tasks','goals','habits','projects','completionEvents','recurrences'])assert.equal(state[key].length,0,key+' must start empty');
+const source=fs.readdirSync('dist').filter(x=>/\.(js|html|css)$/.test(x)).map(x=>fs.readFileSync('dist/'+x,'utf8')).join('\n');
+for(const phrase of ['service_role','sb_secret_'])assert.equal(source.includes(phrase),false,'Do not ship '+phrase);
+const deploy=JSON.parse(fs.readFileSync('vercel.json','utf8'));
+assert.equal(deploy.outputDirectory,'dist');
+assert.equal(fs.existsSync('dist/test-fixture.cjs'),false);
+console.log('Estado vacío, ejemplos privados excluidos y carpeta de publicación: OK');

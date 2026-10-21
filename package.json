@@ -1,0 +1,11 @@
+{
+  "name": "life",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Agenda personal de Juan Pablo Merizalde",
+  "scripts": {
+    "test": "node model.test.cjs && node notebook.test.cjs && node time-format.test.cjs && node production.test.cjs",
+    "check": "node --check dist/model.js && node --check dist/app.js && node --check dist/notebook-view.js"
+  },
+  "engines": { "node": ">=24" }
+}

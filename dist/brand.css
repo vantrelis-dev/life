@@ -1,0 +1,167 @@
+/* Juan Pablo Merizalde. Capa visual reversible; no modifica datos ni conexiones. */
+:root {
+  --bg: #f8f6f1;
+  --surface: #fffefa;
+  --line: #e3ded5;
+  --muted: #746f65;
+  --ink: #24251f;
+  --wine: #703e4b;
+  --gold: #9b7848;
+  --olive: #657054;
+  --green: var(--olive);
+  font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif;
+  color: var(--ink);
+  background: var(--bg);
+}
+body { background: var(--bg); }
+.app-header { height: 77px; gap: 44px; background: #fbf9f4; border-color: var(--line); }
+.logo { display: flex; flex-direction: column; gap: 3px; font: 500 10px/1.1 -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif; letter-spacing: 1.8px; text-transform: uppercase; color: var(--ink); }
+.logo strong { font-size: 20px; font-weight: 750; letter-spacing: -.7px; }
+.logo strong span { color: var(--wine); }
+.app-header nav { gap: 28px; }
+.app-header nav button { color: #736d63; font-size: 12px; }
+.app-header nav button.active { color: var(--ink); font-weight: 600; }
+.app-header nav button.active:after { height: 2px; background: var(--wine); border-radius: 0; }
+.app-header nav button.future-tab { color: #888175; }
+.demo-label { color: #7e7669; }
+.avatar { color: #f8f3e8; background: var(--ink); border: 1px solid #b39a72; font-size: 10px; letter-spacing: .5px; width: 31px; height: 31px; }
+.assistant-button { background: #fffdfa; border-color: #d9d0c2; color: var(--ink); }
+.assistant-button span { color: var(--gold); }
+.icon:hover { background: #eee8de; }
+button:focus-visible, a:focus-visible, summary:focus-visible { outline-color: var(--wine); }
+input:focus-visible, select:focus-visible, textarea:focus-visible { outline-color: #9a7880; }
+.shell { min-height: calc(100vh - 77px); }
+.sidebar { background: #f1eee7; border-color: var(--line); }
+.side-heading, .side-heading button, .side-bottom>button, .side-bottom #demo-info { color: #6b655b; }
+.side-heading { font-size: 10px; letter-spacing: .6px; }
+.company-button { color: #666256; font-size: 12px; }
+.company-button.selected { background: #e8e1d5; color: #322c23; }
+.side-bottom #decision-count { background: #e4d8c5; color: #604c2f; }
+.mini-month-head { color: #514b40; }
+.mini-calendar .mini-day-label { color: #81796b; }
+.mini-calendar .today { background: var(--wine); color: #fffaf6; }
+.mini-calendar .selected { outline-color: #9a7c69; }
+.calendar-check { color: #696456; }
+.calendar-check .check:checked { background: var(--olive); border-color: var(--olive); }
+.period-controls h1 { color: var(--ink); font-weight: 600; letter-spacing: -.8px; }
+.quiet-button { background: #fffdf9; border-color: #ded7ca; color: #514b40; }
+.segmented { background: #eeeae2; border-color: #e7e1d6; }
+.segmented button { color: #706a60; }
+.segmented button.active { background: #fffefa; color: var(--ink); box-shadow: 0 1px 4px #49372010; }
+.add-button { background: var(--ink); color: #fffdf6; box-shadow: inset 0 0 0 1px #423c30; }
+.add-button:hover { background: #3a342e; }
+.text-button, .crumbs button, .day-context summary { color: var(--wine); }
+.subtle, .section-heading small, .extra-hours small { color: var(--muted); }
+.view-mode button { color: #766e60; }
+.view-mode button.active { color: #593b3f; background: #ebe1dc; }
+.crumbs button:last-of-type { color: var(--ink); }
+.crumbs span { color: #918577; }
+.day-column { border: 1px solid #b8a88d20; border-radius: 10px; }
+.day-column:nth-child(1) { --day-bg: #ece5dc; }
+.day-column:nth-child(2) { --day-bg: #e5e9dd; }
+.day-column:nth-child(3) { --day-bg: #e3e8eb; }
+.day-column:nth-child(4) { --day-bg: #eee1df; }
+.day-column:nth-child(5) { --day-bg: #e9e3e9; }
+.day-column:nth-child(6) { --day-bg: #eee5d4; }
+.day-column:nth-child(7) { --day-bg: #e1e7e6; }
+.day-heading { color: #514a40; font-weight: 500; }
+.day-heading small { opacity: .7; }
+.day-column.is-today { border-top: 2px solid #8b6167; }
+.day-column.is-today .date-circle { background: var(--wine); color: #fffcf8; }
+.task-card { background: #fffef9de; border-color: #ffffffb0; box-shadow: 0 1px 2px #4d3e2c04; }
+.task-name { color: var(--ink); font-size: 12px; line-height: 1.55; }
+.task-meta { color: #726a5c; }
+.task-meta .company-tag { font-size: 9px; }
+.priority-tag { color: #615039; background: #eee5d4; }
+.decision-tag { color: #74434c; background: #f0e4e4; }
+.check { border-color: #a8a090; }
+.check:checked { background: var(--olive); border-color: var(--olive); }
+.inline-task, .inline-task button, .inline-task input::placeholder { color: #776e5e; }
+.inline-task:focus-within { border-color: var(--gold); }
+.routine-inline { border-color: #fbf9f1b0; }
+.routine-inline summary { color: #706958; }
+.habit-item small { color: #7a7263; }
+.goal-mini small { color: #776e5e; }
+.simple-note { background: repeating-linear-gradient(transparent, transparent 25px, #e3ded5 25px, #e3ded5 26px); }
+.simple-note::placeholder, .empty { color: #7b7265; }
+.progress-line { background: #e8e2d7; }
+.progress-line i { background: #887653; }
+.day-agenda, .day-side .task-card { background: var(--surface); }
+.hour>span, .week-hour-row>span { color: #7e7566; }
+.hour-slot, .week-hour-cell { border-color: #e8e2d8; }
+.hour-slot:hover, .week-hour-cell:hover { background: #f1ece2; }
+.slot-add { color: var(--gold); }
+.routine-box { background: #e6e9dd; }
+.routine-box:nth-child(2) { background: #e8e1e5; }
+.month-board { background: #fffefa; }
+.month-weekdays { background: #eee9df; color: #756b59; }
+.month-cell.outside { background: #f1ede5; opacity: .65; }
+.month-date.today { background: var(--wine); color: #fff; }
+.more-tasks { color: #746853; }
+.hour-week-header { background: var(--bg); }
+.hour-week-header button.today { color: var(--wine); font-weight: 600; }
+.goal-card { background: var(--surface); border-color: var(--line); }
+.goal-description, .goal-meta { color: #7a7163!important; }
+.goal-card-actions button { color: #735d43; }
+.add-goal-card { background: #f5f1e8; border-color: #cfc1ab; color: #76654e; }
+.period-pill { color: #756b5b; }
+.period-pill.active { background: #ebe0dc; border-color: #ccb4b1; color: var(--wine); }
+.goal-path-hint { color: #827661; background: #f4efe5; }
+.goal-path-hint strong { color: #645037; }
+.habit-group { background: #e5e9dd; }
+.habit-group:nth-child(2) { background: #eee4d3; }
+.habit-group:nth-child(3) { background: #e8e0e5; }
+.habit-add { color: #74654f; }
+.habit-week-strip button { color: #7d7260; }
+.habit-week-strip button.active { color: var(--wine); border-color: #c6aaa7; background: #ece0dc; }
+.decisions-list .task-card { background: var(--surface); }
+.growth-table { background: var(--surface); }
+.growth-table th { color: #796b55; }
+.future-panel { border-color: #cfc2ac; background: #f5f0e6; }
+.future-panel p, .future-panel small { color: #756a59; }
+footer { color: #817765; }
+dialog { background: #fffdf8; color: var(--ink); border-color: #ddd2c1; box-shadow: 0 20px 100px #31231922; }
+dialog::backdrop { background: #29231a35; }
+.dialog-top, .dialog-top strong, dialog label, legend { color: #766852; }
+dialog input, dialog select, dialog textarea { background: #faf7f0; border-color: #e4dccc; color: var(--ink); }
+#task-title { background: #fffdf8; color: var(--ink); }
+#task-title::placeholder { color: #8c8271; }
+.task-chips { border-color: #e8dfcf; }
+.task-chips input, .task-chips select { background: #f1ece2; border-color: #e5dccd; }
+.detail-row select { background: #fffdf9; }
+.goal-trail, #task-more summary { color: #83735b; }
+.card-dialog p, .assistant-body p { color: #746854; }
+.origin { color: #85765e!important; }
+#habit-days input:checked+span { color: var(--wine); border-color: #c9aaa6; background: #ecdfdb; }
+.connection-state, .connection-row p { color: #81755f; }
+.connection-state i { background: #b4a48b; }
+.connection-icon { color: #8d744d; background: #f1ebdf; }
+.connection-row>span:last-child { color: #82735e; background: #eee8dd; }
+.example-prompt { background: #eee7da; color: #6c5a3d; }
+.color-options input:checked+span { outline-color: var(--gold); }
+.mobile-calendars>div { background: var(--surface); }
+.drag-over { outline-color: var(--gold); }
+#toast { background: #3b352a; color: #fffaf1; }
+@media(min-width:1600px) { .task-name { font-size: 13px; } }
+@media(max-width:1100px) { .app-header { gap: 27px; } }
+@media(max-width:900px) { .demo-label { display: none; } }
+@media(max-width:800px) { .app-header { gap: 23px; } .logo strong { font-size: 18px; } }
+@media(max-width:600px) {
+  .app-header { height: auto; min-height: 117px; padding: 17px 18px 0; gap: 15px; }
+  .logo { font-size: 9px; letter-spacing: 1.4px; }
+  .logo strong { font-size: 19px; letter-spacing: -.6px; }
+  .app-header nav { height: 42px; }
+  .app-header nav button { font-size: 12px; }
+  .header-right { gap: 7px; }
+  .assistant-button { gap: 8px; }
+  .shell { min-height: calc(100vh - 117px); }
+  .task-name { font-size: 13px; }
+  .task-meta { color: #6b6252; }
+  .mobile-company select { background: var(--surface); border-color: #dcd1bf; }
+  .side-dialog { border-radius: 0; }
+}
+@media print {
+  body { background: #fff; }
+  .day-column { print-color-adjust: exact; -webkit-print-color-adjust: exact; }
+  .task-name { font-size: 9px; }
+}
