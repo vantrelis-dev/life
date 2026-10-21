@@ -10,6 +10,10 @@ un respaldo privado separado; no se incluye en este repositorio público.
 
 ## Estado de la implementación
 
+Interfaz desplegada: https://life-mu-jet.vercel.app/
+Panel: https://vercel.com/life-286d/life
+La pantalla pública permanece cerrada mientras no se configure Supabase.
+
 El código incluye una puerta de acceso por enlace de correo, guardado con revisión,
 recuperación de borradores y restauración JSON con confirmación en una agenda vacía.
 Sin configuración de Supabase, la aplicación queda cerrada: no se cargan tareas.
@@ -92,3 +96,13 @@ pendientes ni tarjetas abiertas. No hay fusión automática de dos agendas.
 La PWA guarda solo archivos públicos de la interfaz en su caché. No almacena
 respuestas de Auth o de la API en el service worker. El primer acceso requiere red.
 La exportación JSON es manual; el plan gratuito no se trata como un backup garantizado.
+
+## Verificado / pendiente
+
+- Despliegue correcto en Vercel; se comprobó que sin configuración no muestra la agenda.
+- Pruebas de fechas, jerarquía, libreta, recurrencias y formato AM/PM pasan.
+- Pruebas aisladas de guardado serial, conflicto, borrador y recuperación pasan.
+- Dependencias de producción auditadas sin vulnerabilidades conocidas al preparar esta versión.
+- Pendiente: crear el proyecto personal de Supabase y aplicar/verificar el SQL.
+- Pendiente: verificar rechazo de usuarios ajenos en la API real y entrada del propietario.
+- Pendiente: probar sincronización real y migrar únicamente la copia elegida por el propietario.
