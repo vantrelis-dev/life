@@ -5,8 +5,10 @@ if(!window.PlannerSession)throw Error('Life requires an authenticated session.')
 const KEY=window.PlannerSession.cacheKey;
 const $=s=>document.querySelector(s);
 const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-let state=window.PlannerSession.read(),page='agenda',view='day',date=TODAY,company='all',mode='list',goalLevel='five',goalFocus=null,agendaGoal=null,goalsView='structure',slotMinutes=30,executorFilter='all',toastTimer;
+const initialRoute=window.LifeInterface?.readRoute(TODAY)||{page:'agenda',view:'day',date:TODAY,company:'all'};
+let state=window.PlannerSession.read(),page=initialRoute.page,view=initialRoute.view,date=initialRoute.date,company=initialRoute.company,mode='list',goalLevel='five',goalFocus=null,agendaGoal=null,goalsView='structure',slotMinutes=30,executorFilter='all',toastTimer;
 M.upgrade(state);
+if(company!=='all'&&!state.companies[company])company='all';
 const C=id=>state.companies[id]||state.companies.PER;
 const uid=()=>typeof crypto.randomUUID==='function'?crypto.randomUUID():Array.from(crypto.getRandomValues(new Uint32Array(4)),n=>n.toString(16)).join('-');
 const entryDrafts=new Map(), timelinePositions=new Map();
@@ -57,7 +59,7 @@ function render(){
   $('#add-main').hidden=page==='finance'||page==='goals'&&goalsView==='growth';
   for(const id of ['previous-period','go-today','next-period'])$('#'+id).hidden=page==='finance'||page==='agenda'&&view==='matrix';
   $('#internal-calendars').innerHTML=calendarChecks();
-  $('#company-list').innerHTML=`<button class="company-button ${company==='all'?'selected':''}" data-company="all"><span style="width:7px;text-align:center;color:#9aa991">◫</span> Todos</button>${Object.entries(state.companies).map(([id,c])=>`<button class="company-button ${company===id?'selected':''}" data-company="${esc(id)}" style="${companyStyle(id)}"><span class="company-dot"></span>${esc(c.name)}</button>`).join('')}`;
+  $('#company-list').innerHTML=`<button type="button" class="company-button ${company==='all'?'selected':''}" data-company="all" aria-pressed="${company==='all'}" title="Todos los negocios" aria-label="Todos los negocios"><span class="company-initial all-businesses" aria-hidden="true">◫</span><span class="company-label">Todos</span></button>${Object.entries(state.companies).map(([id,c])=>`<button type="button" class="company-button ${company===id?'selected':''}" data-company="${esc(id)}" style="${companyStyle(id)}" aria-pressed="${company===id}" title="${esc(c.name)}" aria-label="Filtrar ${esc(c.name)}"><span class="company-initial" aria-hidden="true">${esc(c.name.slice(0,1))}</span><span class="company-label">${esc(c.name)}</span><span class="company-pending" title="Tareas pendientes">${state.tasks.filter(t=>t.company===id&&!t.done&&!t.cancelledBySeries).length||''}</span></button>`).join('')}`;
   $('#mobile-company').innerHTML=companyOptions(company,true)+'<option value="__new__">＋ Negocio</option><option value="__projects__">Proyectos…</option><option value="__import__">Importar…</option><option value="__repeats__">Tareas recurrentes…</option>';
   $('#decision-count').textContent=filteredTasks().filter(t=>t.decision&&!t.done).length;
   let left=company==='all'?'':`<button class="text-button" data-edit-company="${esc(company)}">${tag(company)} · Editar negocio</button>`;
@@ -70,6 +72,7 @@ function render(){
   if(page==='agenda'&&view!=='matrix'){const undated=filteredTasks().filter(t=>!t.date);if(undated.length)$('#content').insertAdjacentHTML('beforeend',`<details class="extra-hours"><summary>Sin fecha · ${undated.length}</summary>${undated.map(t=>taskCard(t)).join('')}</details>`);}
   renderMini();document.querySelectorAll('.line-title').forEach(resizeLine);const timeline=$('#day-agenda')||$('#week-hours');if(timeline){const key=[date,view,mode,slotMinutes].join('|');timeline.dataset.scrollKey=key;const start=timeline.querySelector('[data-slot-time="07:00"]');timeline.scrollTop=timelinePositions.has(key)?timelinePositions.get(key):start?start.offsetTop:0;}
   if(view==='week'&&page==='agenda'&&mode==='list'&&window.innerWidth<600){const wrap=$('#week-wrap'),column=wrap?.querySelector(`[data-drop-date="${date}"]`);if(column)wrap.scrollLeft=column.offsetLeft-wrap.offsetLeft-16;}
+  window.LifeInterface?.refresh({page,view,date,company});
 }
 function updateTaskFields(){const companyId=$('#task-company').value,oldGoal=$('#task-goal').value,oldProject=$('#task-project').value;$('#task-goal').innerHTML='<option value="">Sin vincular</option>'+state.goals.filter(g=>g.company===companyId).map(g=>`<option value="${esc(g.id)}">${M.levelNames[g.level]} · ${esc(g.title)}</option>`).join('');$('#task-goal').value=oldGoal;$('#task-project').innerHTML='<option value="">Sin proyecto</option>'+state.projects.filter(p=>p.company===companyId&&(!p.status||p.status==='active'||p.id===state.tasks.find(t=>t.id===$('#task-id').value)?.projectId)).map(p=>`<option value="${esc(p.id)}">${esc(p.title)}</option>`).join('')+'<option value="__new__">＋ Añadir proyecto</option>';$('#task-project').value=state.projects.some(p=>p.id===oldProject&&p.company===companyId)?oldProject:'';updateGoalTrail();}
 function updateGoalTrail(){const id=$('#task-goal').value;$('#goal-trail').textContent=id?M.goalTrail(state.goals,id).map(g=>`${M.levelNames[g.level]}: ${g.title}`).join(' › '):'';}
@@ -211,4 +214,5 @@ $('#hours-12h').innerHTML=Array.from({length:48},(_,i)=>'<option value="'+M.form
 window.PlannerSession.exportState=()=>JSON.parse(JSON.stringify(state));
 window.PlannerSession.canRefresh=()=>!entryDrafts.size&&!document.querySelector('dialog[open]')&&!document.activeElement?.matches('input,textarea,select');
 window.PlannerSession.onRemote=body=>{state=M.upgrade(body);entryDrafts.clear();if(company!=='all'&&!state.companies[company])company='all';goalFocus=null;agendaGoal=null;render();};
+window.LifeInterface?.setNavigate(next=>{page=next.page;view=next.view;date=next.date;company=next.company==='all'||state.companies[next.company]?next.company:'all';goalFocus=null;agendaGoal=null;render();});
 render();

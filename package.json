@@ -4,8 +4,9 @@
   "private": true,
   "description": "Agenda personal de Juan Pablo Merizalde",
   "scripts": {
-    "test": "node model.test.cjs && node notebook.test.cjs && node time-format.test.cjs && node sync.test.cjs && node production.test.cjs",
-    "check": "node --check dist/model.js && node --check dist/app.js && node --check dist/notebook-view.js && node --check src/sync.cjs",
+    "test": "node model.test.cjs && node notebook.test.cjs && node time-format.test.cjs && node sync.test.cjs && node interface.test.cjs && node production.test.cjs",
+    "check": "node --check dist/model.js && node --check dist/app.js && node --check dist/notebook-view.js && node --check dist/interface.js && node --check src/sync.cjs",
+    "preview:design": "node scripts/preview-design.mjs",
     "build": "node scripts/build.mjs"
   },
   "engines": {

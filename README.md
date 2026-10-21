@@ -131,5 +131,27 @@ La exportación JSON es manual; el plan gratuito no se trata como un backup gara
   porque el push no generó un despliegue automático visible. Revisar el hook si
   futuros cambios tampoco se publican automáticamente; no desconectar servicios
   ni crear tokens para resolverlo sin necesidad.
-- Pendiente: verificar la entrada real del propietario mediante correo.
+- El propietario confirmó que la entrada mediante correo ya funciona.
 - Pendiente: probar sincronización real y migrar únicamente la copia elegida por el propietario.
+
+## Interfaz de Life
+
+La capa `dist/studio.css` y `dist/interface.js` añade la identidad Life / Merizalde,
+menú plegable, panel móvil, etiquetas por negocio y temas claro/oscuro. Las
+preferencias de apariencia se guardan por navegador en `life.interface.v1`,
+separadas de los datos privados. No cambia Auth, RLS ni el motor de guardado.
+Las rutas de Agenda/Metas/Rutinas se conservan al recargar y funcionan con Atrás.
+La libreta sigue siendo editable por renglones, con notas en una tarjeta aparte.
+
+Se usaron las guías oficiales `frontend-design` (Anthropic) y
+`web-design-guidelines` (Vercel) para dirección visual, contraste, foco y navegación.
+La fuente Manrope se sirve localmente; su licencia OFL está en `dist/assets/fonts/`.
+
+Para revisar el diseño sin entrar a una cuenta: `npm run preview:design`, abrir
+`http://127.0.0.1:8896`. Este servidor solo escucha en loopback y sustituye Auth
+por datos sintéticos únicamente en su respuesta de desarrollo. No escribe en
+Supabase, no cambia los archivos de producción ni forma parte de `dist`.
+Detener con Ctrl+C. No usar este servidor como hosting público.
+
+Comprobaciones: `npm run check`, `npm test`, `npm run build`. La prueba de
+producción comprueba que los ejemplos y la entrada de QA no lleguen a `dist`.

@@ -15,4 +15,8 @@ assert.match(fs.readFileSync('dist/app.js','utf8'),/requires an authenticated se
 const deploy=JSON.parse(fs.readFileSync('vercel.json','utf8'));
 assert.equal(deploy.outputDirectory,'dist');
 assert.equal(fs.existsSync('dist/test-fixture.cjs'),false);
+assert.doesNotMatch(source,/__qa\/preview\.js|life-design-qa|Datos sintéticos para probar/);
+assert.match(html,/src="interface\.js" defer/);
+assert.match(html,/href="studio\.css"/);
+assert.match(html,/id="main-content"/);
 console.log('Estado vacío, ejemplos privados excluidos y carpeta de publicación: OK');

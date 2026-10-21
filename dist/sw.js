@@ -1,6 +1,6 @@
 // Cache only public application files. Never cache Auth, API responses or user data.
-const VERSION='life-shell-v2';
-const FILES=['/','/index.html','/base.css','/style.css','/brand.css','/notebook.css','/cloud.css','/model.js','/notebook-view.js','/app.js','/config.js','/cloud-client.js','/manifest.webmanifest','/icon.svg'];
+const VERSION='life-shell-v3';
+const FILES=['/','/index.html','/base.css','/style.css','/brand.css','/notebook.css','/cloud.css','/studio.css','/interface.js','/assets/fonts/manrope-latin.woff2','/model.js','/notebook-view.js','/app.js','/config.js','/cloud-client.js','/manifest.webmanifest','/icon.svg'];
 self.addEventListener('install',event=>event.waitUntil(caches.open(VERSION).then(cache=>cache.addAll(FILES))));
 self.addEventListener('activate',event=>event.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(key=>key.startsWith('life-shell-')&&key!==VERSION).map(key=>caches.delete(key))))));
 self.addEventListener('fetch',event=>{

@@ -1,0 +1,12 @@
+'use strict';
+const assert=require('node:assert/strict');
+const UI=require('./dist/interface.js');
+assert.deepEqual(UI.preferences(null),{collapsed:false,theme:'light'});
+assert.deepEqual(UI.preferences({collapsed:'true',theme:'unknown'}),{collapsed:false,theme:'light'});
+assert.deepEqual(UI.preferences({collapsed:true,theme:'dark',owner:'ignored'}),{collapsed:true,theme:'dark'});
+const today='2026-10-21';
+assert.deepEqual(UI.route({},today),{page:'agenda',view:'day',date:today,company:'all'});
+assert.deepEqual(UI.route({page:'goals',view:'month',date:'2028-02-29',company:'VIU'},today),{page:'goals',view:'month',date:'2028-02-29',company:'VIU'});
+for(const date of ['2026-02-29','2026-13-01','2026-10-99','x','2026-1-01'])assert.equal(UI.route({date},today).date,today);
+assert.deepEqual(UI.route({page:'<script>',view:'unknown',company:'" onclick="'},today),{page:'agenda',view:'day',date:today,company:'all'});
+console.log('Preferencias visuales y navegación: OK');
