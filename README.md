@@ -21,6 +21,13 @@ El proyecto dedicado, el propietario y las URLs de retorno ya están configurado
 El primer ingreso por correo y la sincronización real entre dispositivos todavía
 deben comprobarse con el propietario.
 
+Primer ingreso: abrir la invitación administrativa enviada por Supabase y aceptar
+el acceso antes de usar «Enviarme enlace de acceso». Una cuenta invitada pero no
+confirmada devuelve `signup_disabled` al solicitar un magic link si el registro
+público está cerrado. No habilitar signups ni marcar el correo como verificado por
+SQL para resolverlo. Reenviar la invitación administrativa conserva el mismo
+usuario. Se reenvió la invitación el 21 de octubre de 2026 a las 10:39 a. m. Bogotá.
+
 Los datos iniciales nuevos están vacíos. El prototipo original y su almacenamiento
 no se modificaron. Las pruebas usan una fixture sintética que no se publica.
 
@@ -116,5 +123,13 @@ La exportación JSON es manual; el plan gratuito no se trata como un backup gara
   y `permission denied for table planner_documents`.
 - Se retiró EXECUTE público de la función interna `rls_auto_enable()` detectada
   por el Advisor; no se desactivó el trigger ni RLS.
+- Security Advisor: cero errores; queda la advertencia de protección contra
+  contraseñas filtradas. El flujo implementado usa enlaces de correo, no un
+  formulario de contraseña. Performance Advisor: cero errores y advertencias.
+- Vercel publicó `efb3195` y se verificó que la URL canónica sirve la configuración
+  publicable con HTTPS 200. Esta versión se desplegó manualmente desde `main`
+  porque el push no generó un despliegue automático visible. Revisar el hook si
+  futuros cambios tampoco se publican automáticamente; no desconectar servicios
+  ni crear tokens para resolverlo sin necesidad.
 - Pendiente: verificar la entrada real del propietario mediante correo.
 - Pendiente: probar sincronización real y migrar únicamente la copia elegida por el propietario.
