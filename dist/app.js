@@ -1,11 +1,11 @@
 'use strict';
 const M=window.PlannerModel;
 const TODAY=new Intl.DateTimeFormat('en-CA',{timeZone:'America/Bogota',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date());
-const KEY='mi-dia.pastel-v2.demo';
+if(!window.PlannerSession)throw Error('Life requires an authenticated session.');
+const KEY=window.PlannerSession.cacheKey;
 const $=s=>document.querySelector(s);
 const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-let state=M.seed(TODAY),page='agenda',view='day',date=TODAY,company='all',mode='list',goalLevel='five',goalFocus=null,agendaGoal=null,goalsView='structure',slotMinutes=30,executorFilter='all',toastTimer;
-try{const loaded=JSON.parse(localStorage.getItem(KEY));if(M.validState(loaded))state=loaded;}catch{}
+let state=window.PlannerSession.read(),page='agenda',view='day',date=TODAY,company='all',mode='list',goalLevel='five',goalFocus=null,agendaGoal=null,goalsView='structure',slotMinutes=30,executorFilter='all',toastTimer;
 M.upgrade(state);
 const C=id=>state.companies[id]||state.companies.PER;
 const uid=()=>typeof crypto.randomUUID==='function'?crypto.randomUUID():Array.from(crypto.getRandomValues(new Uint32Array(4)),n=>n.toString(16)).join('-');
@@ -16,7 +16,7 @@ const companyStyle=id=>`--company:${C(id).color};--company-bg:${C(id).bg}`;
 const shortDate=d=>M.dateObject(d).toLocaleDateString('es-CO',{day:'numeric',month:'short',timeZone:'UTC'}).replace(' de ',' ');
 const dayName=d=>M.dateObject(d).toLocaleDateString('es-CO',{weekday:'long',timeZone:'UTC'});
 function notify(text){const open=[...document.querySelectorAll('dialog[open]')].at(-1);(open||document.body).append($('#toast'));$('#toast').textContent=text;$('#toast').classList.add('visible');clearTimeout(toastTimer);toastTimer=setTimeout(()=>$('#toast').classList.remove('visible'),3200);}
-function save(){try{localStorage.setItem(KEY,JSON.stringify(state));$('#save-status').textContent='Guardado solo en este navegador';}catch{$('#save-status').textContent='Sin guardado local: los cambios se perderán al cerrar';}}
+function save(){try{window.PlannerSession.save(state);}catch(error){$('#save-status').textContent=error.message;notify(error.message);}}
 function companyOptions(selected,all=false){return `${all?'<option value="all">Todos</option>':''}${Object.entries(state.companies).map(([id,c])=>`<option value="${esc(id)}" ${selected===id?'selected':''}>${esc(c.name)}</option>`).join('')}`;}
 function tag(id){return `<span class="company-tag" title="${esc(C(id).name)}" style="${companyStyle(id)}">@${esc(M.handle(C(id).name))}</span>`;}
 function filteredTasks(){const ids=agendaGoal?M.descendants(state.goals,agendaGoal):null;return state.tasks.filter(t=>!t.cancelledBySeries&&(company==='all'||t.company===company)&&(!ids||ids.has(t.goalId))&&(page!=='agenda'||state.calendars.find(c=>c.id===t.calendarId)?.visible!==false));}
@@ -208,4 +208,7 @@ function openRepeats(show=true){
 $('#task-more').insertAdjacentHTML('beforebegin','<div class="repeat-controls"><label for="task-repeat">Repetir</label><select id="task-repeat"><option value="">No repetir</option><option value="day:1">Cada día</option><option value="week:1">Cada semana</option><option value="week:2">Cada 2 semanas</option><option value="month:1">Cada mes</option><option value="year:1">Cada año</option></select><div id="task-repeat-info" class="origin"></div></div>');
 document.body.insertAdjacentHTML('beforeend','<dialog id="repeats-dialog" class="card-dialog"><div class="dialog-top"><strong>Tareas recurrentes</strong><button class="icon close-dialog" aria-label="Cerrar tareas recurrentes">×</button></div><p class="origin">Son tareas de tu agenda, no el calendario de pagos. Se muestran al abrir su fecha. No son alarmas ni automatizaciones externas. Detener conserva el historial y las fechas completadas; oculta las futuras pendientes.</p><div id="repeats-list"></div></dialog>');
 $('#hours-12h').innerHTML=Array.from({length:48},(_,i)=>'<option value="'+M.formatTime12(M.timeLabel(i*30))+'"></option>').join('');
+window.PlannerSession.exportState=()=>JSON.parse(JSON.stringify(state));
+window.PlannerSession.canRefresh=()=>!entryDrafts.size&&!document.querySelector('dialog[open]')&&!document.activeElement?.matches('input,textarea,select');
+window.PlannerSession.onRemote=body=>{state=M.upgrade(body);entryDrafts.clear();if(company!=='all'&&!state.companies[company])company='all';goalFocus=null;agendaGoal=null;render();};
 render();

@@ -8,20 +8,24 @@ Publicación de código con historial limpio. El historial anterior se conserva 
 un respaldo privado separado; no se incluye en este repositorio público.
 `vantrelis-dev` agrupa los repositorios personales y `life` contiene esta agenda.
 
-## Estado real
+## Estado de la implementación
 
-Código preparado para Vercel; **la app todavía no está publicada**. Sigue siendo un prototipo
-con guardado local por navegador. No tiene login ni sincronización entre equipos.
-No usarlo como único almacenamiento de pendientes importantes.
+El código incluye una puerta de acceso por enlace de correo, guardado con revisión,
+recuperación de borradores y restauración JSON con confirmación en una agenda vacía.
+Sin configuración de Supabase, la aplicación queda cerrada: no se cargan tareas.
+La publicación y las pruebas reales de acceso dependen de completar el proyecto
+dedicado, autorizar al propietario y configurar las URLs de retorno.
 
 Los datos iniciales nuevos están vacíos. El prototipo original y su almacenamiento
 no se modificaron. Las pruebas usan una fixture sintética que no se publica.
 
 ## Verificación local
 
-Node 24 o superior, sin dependencias de frontend:
+Node 24 o superior. Dependencias fijadas y lockfile incluido:
 
 ```sh
+npm ci
+npm run build
 npm test
 npm run check
 python3 -m http.server 8896 --bind 127.0.0.1 --directory dist
@@ -39,8 +43,8 @@ Abrir http://127.0.0.1:8896 y detener el servidor al terminar.
   cerrar/borrar el navegador no borra el dato guardado en servidor.
 - Riesgo que debe reducirse: pérdida de datos locales y exposición pública.
 - Mantenimiento: repositorio, despliegue, acceso y respaldo verificable.
-- Siguiente paso: autorizar la organización personal de Supabase en el conector;
-  después añadir acceso y persistencia. Vercel ya está con el correo personal,
+- Siguiente paso: completar el proyecto personal de Supabase y verificar las
+  políticas y el acceso real. Vercel ya está con la cuenta personal,
   usuario `jpbuilds`, espacio `Life` (`life-286d`).
 
 El código será público temporalmente por decisión del propietario para conectar
@@ -55,13 +59,17 @@ No se reutiliza la organización ni base de datos de VIUU.
 
 ## Antes de publicar
 
-1. Crear el proyecto de Supabase en la organización personal autorizada.
-2. Login de un único usuario y políticas por propietario, no solo ocultar la UI.
-3. Guardado duradero con aviso de errores y protección contra sobrescrituras
-   entre dos dispositivos.
+1. Completar el proyecto dedicado de Supabase. Mantener desactivado el alta pública.
+2. Crear/invitar solo al propietario verificado, anotar su UUID y ejecutar
+   `database/setup.sql` como administrador del proyecto nuevo. Insertar ese UUID
+   en `life_private.owners` desde el administrador (nunca desde el navegador).
+3. Configurar URL, clave publicable y UUID en `dist/config.js`, más Site URL y
+   redirects permitidos en Supabase Auth. No usar claves secretas en el cliente.
+   El enlace de correo usa el flujo implícito documentado; no requiere Google OAuth.
 4. Exportar desde el origen real del prototipo y revisar la importación antes de
    migrar. No importar datos de pruebas ni reemplazar tareas sin confirmación.
-5. Verificar acceso denegado a terceros y flujo de recuperación/backup.
+5. Ejecutar `database/verify.sql`, verificar rechazo de anon y de otro usuario,
+   y probar dos dispositivos, fallo de red, conflicto y exportación/restauración.
 6. Publicar en la cuenta personal de Vercel, separada de las empresas.
 
 No se ha añadido conexión a Brain, Google Calendar, Gmail ni agentes. La pestaña
@@ -75,3 +83,12 @@ las políticas de acceso. Nunca usar `service_role` en el navegador.
 
 El almacenamiento local original usa `mi-dia.pastel-v2.demo`; cada origen/puerto
 y perfil tiene datos independientes. No borrar ni reiniciar el prototipo para migrar.
+
+El nuevo caché usa `life.owner.<UUID>`; no lee automáticamente la demo anterior.
+Los conflictos paran la escritura, no la fuerzan. El borrador se conserva localmente
+y puede descargarse. Actualizar desde el servidor exige no tener ediciones locales
+pendientes ni tarjetas abiertas. No hay fusión automática de dos agendas.
+
+La PWA guarda solo archivos públicos de la interfaz en su caché. No almacena
+respuestas de Auth o de la API en el service worker. El primer acceso requiere red.
+La exportación JSON es manual; el plan gratuito no se trata como un backup garantizado.

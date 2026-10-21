@@ -4,8 +4,17 @@
   "private": true,
   "description": "Agenda personal de Juan Pablo Merizalde",
   "scripts": {
-    "test": "node model.test.cjs && node notebook.test.cjs && node time-format.test.cjs && node production.test.cjs",
-    "check": "node --check dist/model.js && node --check dist/app.js && node --check dist/notebook-view.js"
+    "test": "node model.test.cjs && node notebook.test.cjs && node time-format.test.cjs && node sync.test.cjs && node production.test.cjs",
+    "check": "node --check dist/model.js && node --check dist/app.js && node --check dist/notebook-view.js && node --check src/sync.cjs",
+    "build": "node scripts/build.mjs"
   },
-  "engines": { "node": ">=24" }
+  "engines": {
+    "node": ">=24"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "2.118.0"
+  },
+  "devDependencies": {
+    "esbuild": "0.28.2"
+  }
 }

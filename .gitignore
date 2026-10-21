@@ -9,5 +9,6 @@ coverage/
 qa/
 backups/
 exports/
+/dist/cloud-client.js
 *.log
 *-merizalde-*.json
